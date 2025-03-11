@@ -44,3 +44,34 @@ npm run start:dev
 ### 📌 Routes
 
 You can view all supported routes through this postman collection : https://documenter.getpostman.com/view/20648191/2sAYdoGTRi
+
+## 📍 Frontend (React/Next.js)
+
+### 📌 Overview
+
+The frontend is built using **React/Next.js**, It has:
+
+- **Sign Up Page**
+- **Sign In Page**
+- **Home Page** : to show user data if user logged in and also log out
+
+### 📌 Deployment
+
+- This app is deployed to this base URL : https://auth-module-mu.vercel.app/
+
+### 🚀 Running the Front end Locally
+
+#### 1- Install Dependencies
+
+```sh
+cd front-end
+npm install
+```
+
+#### 2- Create a .env.local file in the front-end/ folder and add env variables that will be shared through email
+
+#### 3- Start the server
+
+```sh
+npm run dev
+```

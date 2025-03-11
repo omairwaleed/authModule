@@ -29,7 +29,7 @@ const Page = () => {
         email,
         password,
       });
-      router.push("/");
+      // router.push("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data?.message || error.message);
