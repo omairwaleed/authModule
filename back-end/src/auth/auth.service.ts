@@ -64,19 +64,21 @@ export class AuthService {
     );
 
     await this.updateRefreshToken(userId, refreshToken);
-
+    const hostname = new URL(process.env.FRONTEND_URL!).hostname;
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.ENV === 'production',
-      // sameSite: 'strict',
+      sameSite: 'strict',
       path: '/',
+      domain: hostname,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.ENV === 'production',
-      // sameSite: 'strict',
+      sameSite: 'strict',
       path: '/auth/refresh',
+      domain: hostname,
     });
     return res.json({ message: 'Login successful' });
   }
@@ -124,11 +126,14 @@ export class AuthService {
   }
 
   logOut(res: Response): Response<any, Record<string, any>> {
+    const hostname = new URL(process.env.FRONTEND_URL!).hostname;
+
     res.cookie('accessToken', '', {
       httpOnly: true,
       secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/',
+      domain: hostname,
     });
 
     res.cookie('refreshToken', '', {
@@ -136,6 +141,7 @@ export class AuthService {
       secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/auth/refresh',
+      domain: hostname,
     });
     return res.json({ message: 'logout successful' });
   }
