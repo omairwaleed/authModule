@@ -8,13 +8,13 @@ import Image from "next/image";
 import axiosClient from "@/utils/axios";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 const Page = () => {
   const { handleSubmit, control } = useForm({
     defaultValues: { password: "", email: "" },
   });
-  const router = useRouter();
+  // const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const submitHandler = async ({
     password,
@@ -29,7 +29,7 @@ const Page = () => {
         email,
         password,
       });
-      router.push("/");
+      // router.push("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data?.message || error.message);
