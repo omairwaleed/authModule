@@ -67,14 +67,14 @@ export class AuthService {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/auth/refresh',
     });
@@ -126,14 +126,14 @@ export class AuthService {
   logOut(res: Response): Response<any, Record<string, any>> {
     res.cookie('accessToken', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/',
     });
 
     res.cookie('refreshToken', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.ENV === 'production',
       sameSite: 'strict',
       path: '/auth/refresh',
     });
