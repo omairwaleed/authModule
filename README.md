@@ -15,6 +15,7 @@ The backend is built using **NestJS**, a progressive Node.js framework for build
 - **Sign In**
 - **Refresh access token** : to prevent user from logging in every time access token is expired by securely saving refresh token in DB after hashing it
 - **Protected route to get current user data** : by default any route will be added will be protected
+- **logout**
 - **Logging**
 - **Database Integration (MongoDB)**
 

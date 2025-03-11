@@ -1,9 +1,8 @@
 import { AuthService } from './auth.service';
-import { Controller, Post, Body, Res, Req } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, Get } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { Public } from './public.decorator';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { Request, Response } from 'express';
 export interface RequestWithCookies extends Request {
   cookies: { refreshToken?: string; accessToken?: string };
@@ -24,15 +23,16 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
-  async refresh(
-    @Req() req: RequestWithCookies,
-    @Body() RefreshTokenDto: RefreshTokenDto,
-    @Res() res: Response,
-  ) {
+  async refresh(@Req() req: RequestWithCookies, @Res() res: Response) {
     return this.authService.refreshToken(
       req.cookies?.refreshToken as string,
-      RefreshTokenDto,
       res,
     );
+  }
+
+  @Public()
+  @Get('logout')
+  logout(@Req() req: RequestWithCookies, @Res() res: Response) {
+    return this.authService.logOut(res);
   }
 }

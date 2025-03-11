@@ -10,8 +10,6 @@ import * as bcrypt from 'bcryptjs';
 import { SignUpDto } from './dto/sign-up.dto';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/sign-in.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import * as crypto from 'crypto';
 import { Response } from 'express';
 @Injectable()
 export class AuthService {
@@ -60,7 +58,10 @@ export class AuthService {
       { secret: process.env.JWT_SECRET, expiresIn: '15m' },
     );
 
-    const refreshToken = crypto.randomBytes(64).toString('hex');
+    const refreshToken = this.jwtService.sign(
+      { sub: userId },
+      { secret: process.env.JWT_SECRET, expiresIn: '7d' },
+    );
 
     await this.updateRefreshToken(userId, refreshToken);
 
@@ -71,7 +72,6 @@ export class AuthService {
       path: '/',
     });
 
-    // Update Refresh Token (Only for `/auth/refresh`)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -88,24 +88,55 @@ export class AuthService {
   }
   async refreshToken(
     refreshToken: string,
-    RefreshTokenDto: RefreshTokenDto,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    if (!refreshToken) {
-      throw new UnauthorizedException('missing refresh token');
-    }
-    const { userId } = RefreshTokenDto;
-    const user = await this.userModel.findById(userId);
-    if (!user || !user.refreshToken) {
-      throw new UnauthorizedException('Access Denied');
-    }
+    try {
+      if (!refreshToken) {
+        throw new UnauthorizedException('missing refresh token');
+      }
+      const decodedToken = this.jwtService.verify<{ sub: string }>(
+        refreshToken,
+        {
+          secret: process.env.JWT_SECRET,
+        },
+      );
+      const userId = decodedToken.sub;
+      const user = await this.userModel.findById(userId);
+      if (!user || !user.refreshToken) {
+        throw new UnauthorizedException('Access Denied');
+      }
 
-    const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
+      const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
 
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid refresh token');
+      if (!isMatch) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      return this.generateTokens(
+        user._id.toString(),
+        user.email,
+        user.name,
+        res,
+      );
+    } catch (e: any) {
+      return res.status(401).json({ message: `${e}` });
     }
+  }
 
-    return this.generateTokens(user._id.toString(), user.email, user.name, res);
+  logOut(res: Response): Response<any, Record<string, any>> {
+    res.cookie('accessToken', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.cookie('refreshToken', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/auth/refresh',
+    });
+    return res.json({ message: 'logout successful' });
   }
 }

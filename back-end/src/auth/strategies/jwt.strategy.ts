@@ -10,8 +10,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          // Extract JWT token from cookies
-          if (req?.cookies?.accessToken as string) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          if (req?.cookies?.accessToken) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return req.cookies.accessToken as string;
           }
           return null;
