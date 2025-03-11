@@ -68,14 +68,14 @@ export class AuthService {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.ENV === 'production',
-      sameSite: 'strict',
+      // sameSite: 'strict',
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.ENV === 'production',
-      sameSite: 'strict',
+      // sameSite: 'strict',
       path: '/auth/refresh',
     });
     return res.json({ message: 'Login successful' });
